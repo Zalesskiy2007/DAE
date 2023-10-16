@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Parser">
       <UniqueIdentifier>{6156f96a-5eb6-4f63-87f4-5d3c29416053}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\XML">
+      <UniqueIdentifier>{12698e65-10ca-424a-8ad9-fcfb298a6be7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dae.cpp">
@@ -37,6 +40,9 @@
     </ClInclude>
     <ClInclude Include="src\parser\parser.h">
       <Filter>Source Files\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="src\xml\xml.h">
+      <Filter>Source Files\XML</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

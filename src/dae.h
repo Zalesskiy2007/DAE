@@ -13,6 +13,8 @@
 #include "parser/scanner.h"
 #include "parser/parser.h"
 
+#include "xml/xml.h"
+
 #include <iostream>
 #include <map>
 

@@ -151,6 +151,7 @@
     <ClInclude Include="src\def.h" />
     <ClInclude Include="src\parser\parser.h" />
     <ClInclude Include="src\parser\scanner.h" />
+    <ClInclude Include="src\xml\xml.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

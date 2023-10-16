@@ -43,7 +43,7 @@ namespace dae
   {
   private:
     std::vector<std::string> Lexems;
-    INT LexemSize;
+    size_t LexemSize;
   public:
     /* Class constructor */
     parser()
@@ -61,12 +61,13 @@ namespace dae
     {
       static INT cnt = 0;
 
+      if (cnt >= LexemSize)
+        return FALSE;
+
       l = Lexems[cnt];
       cnt++;
-      if (cnt - 1 < LexemSize)
-        return TRUE;
 
-      return FALSE;
+      return TRUE;
     }
 
     VOID Parse( std::vector<tag> &Tags )
@@ -77,9 +78,7 @@ namespace dae
       while (TRUE)
       {
         if (!ParseLexem(CurLex))
-        {
           return;
-        }
 
         /*
         
@@ -95,36 +94,83 @@ namespace dae
 
         if (CurLex == "<")
         {
-          tag NewTag;
-
-          ParseLexem(NewTag.Name);
           ParseLexem(CurLex);
-          while (CurLex != "/" && CurLex != ">")
-          {
-            std::string eq, val;
-
-            ParseLexem(eq);
-            ParseLexem(val);
-
-            NewTag.Attribs[CurLex] = val;
-            NewTag.AttribsNames.push_back(CurLex);
-            ParseLexem(CurLex);
-          }
-
           if (CurLex == "/")
-            ParseLexem(CurLex);
-
-          if (Stack.size() == 0)
           {
-            Tags.push_back(NewTag);
-            Stack.push_back(&Tags[Tags.size() - 1]);
+            ParseLexem(CurLex); // Name
+            ParseLexem(CurLex); // >
+            Stack.pop_back();
+          }
+          else if (CurLex == "?")
+          {
+            tag Header;
+
+            ParseLexem(CurLex);
+            Header.Name = CurLex;
+
+            ParseLexem(CurLex);
+            while (CurLex != "?")
+            {
+              std::string eq, val;
+
+              ParseLexem(eq);
+              ParseLexem(val);
+
+              Header.Attribs[CurLex] = val;
+              Header.AttribsNames.push_back(CurLex);
+              ParseLexem(CurLex);
+            }
+
+            ParseLexem(CurLex);
+            Tags.push_back(Header);
           }
           else
           {
-            Stack[Stack.size() - 1]->Tags.push_back(NewTag);
-            Stack.push_back(&Stack[Stack.size() - 1]->Tags[Stack[Stack.size() - 1]->Tags.size() - 1]);
+            tag NewTag;
+
+            NewTag.Name = CurLex;
+            ParseLexem(CurLex);
+            while (CurLex != "/" && CurLex != ">")
+            {
+              std::string eq, val;
+
+              ParseLexem(eq);
+              ParseLexem(val);
+
+              NewTag.Attribs[CurLex] = val;
+              NewTag.AttribsNames.push_back(CurLex);
+              ParseLexem(CurLex);
+            }
+
+            if (CurLex == "/")
+            {
+              ParseLexem(CurLex);
+              if (Stack.size() == 0)
+                Tags.push_back(NewTag);
+              else
+                Stack[Stack.size() - 1]->Tags.push_back(NewTag);
+            }
+            else
+            {
+              if (Stack.size() == 0)
+              {
+                Tags.push_back(NewTag);
+                Stack.push_back(&Tags[Tags.size() - 1]);
+              }
+              else
+              {
+                Stack[Stack.size() - 1]->Tags.push_back(NewTag);
+                Stack.push_back(&Stack[Stack.size() - 1]->Tags[Stack[Stack.size() - 1]->Tags.size() - 1]);
+              }
+            }
           }
-          //return;
+        }
+        else
+        {
+          if (Stack.size() == 0)
+            Tags[Tags.size() - 1].Text += CurLex;
+          else
+            Stack[Stack.size() - 1]->Text += CurLex;
         }
       }
     }
