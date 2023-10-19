@@ -64,7 +64,30 @@ namespace dae
       for (INT i = 0; i < Tags.size(); i++)
         DisplayRec(Tags[i], 0);
     }
+
+    std::vector<tag *> FindByAttribVal(const std::string &Att, const std::string &Val)
+    {
+      std::vector<tag *> Ans;
+
+      for (INT i = 0; i < Tags.size(); i++)
+        FindByAttribValRec(Ans, Att, Val, &Tags[i]);
+
+      return Ans;
+    }
+
   private:
+    VOID FindByAttribValRec( std::vector<tag *> &A, const std::string &At, const std::string &Val, tag *Cur )
+    {
+      if (Cur->Tags.size() > 0)
+        for (INT i = 0; i < Cur->Tags.size(); i++)
+          FindByAttribValRec(A, At, Val, &Cur->Tags[i]);
+
+      if (Cur->Attribs.find(At) == Cur->Attribs.end())
+        return;
+      else if (Cur->Attribs[At] == Val)
+        A.push_back(Cur);
+    }
+
     VOID DisplayRec( tag &V, INT RecLevel )
     {
       std::string word;
@@ -72,16 +95,34 @@ namespace dae
       if (V.Tags.size() == 0)
       {
         word = "";
-        for (INT i = 0; i < RecLevel * 4; i++)
-          word += " ";
-        std::cout << word << V.Name << '\n';
+        for (INT i = 0; i < RecLevel; i++)
+          word += "  ";
+        std::cout << word << "<" << V.Name << " ";
+        for (auto &i : V.AttribsNames)
+          std::cout << i << "=" << V.Attribs[i] << ";";
+        std::cout << ">";
+
+        std::cout << "(";
+        for (auto &x : V.Text)
+          std::cout << x;
+        std::cout << ")\n";
+
 
         return;
       }
+
       word = "";
-      for (INT i = 0; i < RecLevel * 4; i++)
-        word += " ";
-      std::cout << word << V.Name << '\n';
+      for (INT i = 0; i < RecLevel; i++)
+        word += "  ";
+      std::cout << word << "<" << V.Name << " ";
+      for (auto &i : V.AttribsNames)
+        std::cout << i << "=" << V.Attribs[i] << ";";
+      std::cout << ">";
+
+      std::cout << "(";
+        for (auto &x : V.Text)
+          std::cout << x;
+        std::cout << ")\n";
 
       for (INT j = 0; j < V.Tags.size(); j++)
         DisplayRec(V.Tags[j], RecLevel + 1);

@@ -23,7 +23,7 @@ namespace dae
     std::vector<tag> Tags;
     std::map<std::string, std::string> Attribs;
     std::vector<std::string> AttribsNames;
-    std::string Text;
+    std::vector<std::string> Text;
   public:
     /* Class constructor */
     tag()
@@ -168,9 +168,9 @@ namespace dae
         else
         {
           if (Stack.size() == 0)
-            Tags[Tags.size() - 1].Text += CurLex;
+            Tags[Tags.size() - 1].Text.push_back(CurLex);
           else
-            Stack[Stack.size() - 1]->Text += CurLex;
+            Stack[Stack.size() - 1]->Text.push_back(CurLex);
         }
       }
     }
